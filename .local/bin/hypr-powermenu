@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 export PATH="$HOME/.local/bin:$PATH"
 
-# Power menu for Hyprland using Wofi
-entries="💤 Suspender\n🚪 Encerrar Sessão\n🔄 Reiniciar\n⏻ Desligar"
+# Power menu for Hyprland using Wofi (Nerd Font Icons)
+entries="󰤄  Suspender\n󰍃  Encerrar Sessão\n󰑓  Reiniciar\n󰐥  Desligar"
 
 selected=$(echo -e "$entries" | wofi --dmenu --prompt "Power Menu" --width 280 --height 220 --location center --hide-scroll)
 

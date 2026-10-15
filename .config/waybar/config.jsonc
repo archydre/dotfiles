@@ -41,10 +41,10 @@
         "format": "{player_icon} {title} - {artist}",
         "format-paused": "{status_icon} <i>{title}</i>",
         "player-icons": {
-            "default": "▶"
+            "default": "󰐊"
         },
         "status-icons": {
-            "paused": "⏸"
+            "paused": "󰏤"
         },
         "max-length": 30,
         "tooltip-format": "{player}: {title} ({artist})"
