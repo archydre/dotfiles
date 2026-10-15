@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+# Wallpaper switcher for Hyprland
+WALLPAPER_DIR="$HOME/.local/share/backgrounds"
+CONFIG_FILE="$HOME/.config/hypr/hyprpaper.conf"
+
+if pgrep -x wofi > /dev/null; then
+    pkill -x wofi
+    exit 0
+fi
+
+if [ ! -d "$WALLPAPER_DIR" ]; then
+    notify-send "Wallpapers" "Wallpaper directory not found."
+    exit 1
+fi
+
+selected_file=$(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \) -exec basename {} \; | sort | wofi --dmenu --prompt "Select Wallpaper" --width 760 --height 420)
+
+if [ -n "$selected_file" ]; then
+    FULL_PATH="$WALLPAPER_DIR/$selected_file"
+    
+    # Detect connected monitors dynamically
+    MONITORS=$(hyprctl monitors -j 2>/dev/null | jq -r '.[].name' 2>/dev/null)
+    if [ -z "$MONITORS" ]; then
+        MONITORS="HDMI-A-1"
+    fi
+
+    # Persist in config
+    echo "preload = $FULL_PATH" > "$CONFIG_FILE"
+    echo "" >> "$CONFIG_FILE"
+    for mon in $MONITORS; do
+        cat <<EOF >> "$CONFIG_FILE"
+wallpaper {
+    monitor = $mon
+    path = $FULL_PATH
+}
+EOF
+    done
+    echo "" >> "$CONFIG_FILE"
+    echo "splash = false" >> "$CONFIG_FILE"
+
+    # Apply immediately
+    pkill hyprpaper || true
+    sleep 0.1
+    hyprpaper &
+    
+    notify-send -i "$FULL_PATH" "Wallpaper" "Wallpaper alterado com sucesso"
+fi

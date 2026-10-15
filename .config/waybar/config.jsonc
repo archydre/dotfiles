@@ -1,0 +1,115 @@
+{
+    "layer": "top",
+    "position": "top",
+    "margin-top": 6,
+    "margin-left": 10,
+    "margin-right": 10,
+    "height": 38,
+    "spacing": 6,
+    "modules-left": [
+        "custom/arch",
+        "hyprland/workspaces",
+        "custom/wallpaper",
+        "custom/cliphist"
+    ],
+    "modules-center": [
+        "mpris",
+        "hyprland/window"
+    ],
+    "modules-right": [
+        "cpu",
+        "memory",
+        "wireplumber",
+        "tray",
+        "clock",
+        "custom/power"
+    ],
+
+    "custom/arch": {
+        "format": "󰣇",
+        "tooltip": "Application Menu",
+        "on-click": "wofi --show drun"
+    },
+
+    "custom/wallpaper": {
+        "format": "󰸉",
+        "tooltip": "Change Wallpaper (Super+Shift+W)",
+        "on-click": "hypr-wallpaper-picker"
+    },
+
+    "custom/cliphist": {
+        "format": "󱉥",
+        "tooltip": "Clipboard History (Super+V)",
+        "on-click": "cliphist list | wofi --dmenu --prompt 'Clipboard History' | cliphist decode | wl-copy"
+    },
+
+    "hyprland/workspaces": {
+        "disable-scroll": false,
+        "all-outputs": true,
+        "format": "{name}",
+        "on-scroll-up": "hypr-workspace-scroll prev",
+        "on-scroll-down": "hypr-workspace-scroll next"
+    },
+
+    "mpris": {
+        "format": "{player_icon} {title} - {artist}",
+        "format-paused": "{status_icon} <i>{title}</i>",
+        "player-icons": {
+            "default": "▶"
+        },
+        "status-icons": {
+            "paused": "⏸"
+        },
+        "max-length": 30,
+        "tooltip-format": "{player}: {title} ({artist})"
+    },
+
+    "hyprland/window": {
+        "format": "{title}",
+        "max-length": 35,
+        "separate-outputs": true
+    },
+
+    "cpu": {
+        "format": "  {usage}%",
+        "tooltip": true,
+        "interval": 2
+    },
+
+    "memory": {
+        "format": "  {percentage}%",
+        "tooltip": true,
+        "tooltip-format": "{used:0.1f}GiB / {total:0.1f}GiB ({percentage}%)",
+        "interval": 3
+    },
+
+    "wireplumber": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "󰝟  Muted",
+        "format-icons": ["󰕿", "󰖀", "󰕾"],
+        "on-click": "pavucontrol",
+        "on-click-right": "hypr-volume mute",
+        "on-scroll-up": "hypr-volume raise",
+        "on-scroll-down": "hypr-volume lower",
+        "scroll-step": 5,
+        "tooltip": true,
+        "tooltip-format": "Volume: {volume}%"
+    },
+
+    "tray": {
+        "icon-size": 17,
+        "spacing": 8
+    },
+
+    "clock": {
+        "format": "󰥔  {:%H:%M}",
+        "format-alt": "󰃭  {:%Y-%m-%d - %H:%M}",
+        "tooltip-format": "<tt><small>{calendar}</small></tt>"
+    },
+
+    "custom/power": {
+        "format": "󰐥",
+        "tooltip": "Power Options",
+        "on-click": "hypr-powermenu"
+    }
+}

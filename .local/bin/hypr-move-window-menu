@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+# hypr-move-window-menu: Menu interativo Wofi para mover a janela ativa para outro workspace
+
+if pgrep -x wofi > /dev/null; then
+    pkill -x wofi
+    exit 0
+fi
+
+WS_LIST=$(python3 -c "
+import subprocess, json
+clients = json.loads(subprocess.check_output(['hyprctl', 'clients', '-j']))
+active = json.loads(subprocess.check_output(['hyprctl', 'activeworkspace', '-j']))
+ws_map = {}
+for c in clients:
+    wid = c.get('workspace', {}).get('id', 0)
+    if wid > 0:
+        ws_map.setdefault(wid, []).append(c.get('title', ''))
+
+max_ws = max(ws_map.keys()) if ws_map else 1
+for w in range(1, max_ws + 2):
+    count = len(ws_map.get(w, []))
+    info = f'{count} janela(s)' if count > 0 else 'vazio / novo'
+    curr = ' [Atual]' if w == active.get('id') else ''
+    print(f'Workspace {w} ({info}){curr}')
+")
+
+SELECTED=$(echo "$WS_LIST" | wofi --dmenu --prompt "Mover janela ativa para..." --width 520 --height 320)
+
+if [ -n "$SELECTED" ]; then
+    TARGET_ID=$(echo "$SELECTED" | awk '{print $2}')
+    if [ -n "$TARGET_ID" ]; then
+        hyprctl dispatch "hl.dsp.window.move({ workspace = ${TARGET_ID} })" >/dev/null 2>&1 || \
+        hyprctl dispatch "hl.dsp.exec_raw('movetoworkspace ${TARGET_ID}')" >/dev/null 2>&1 || \
+        hyprctl dispatch movetoworkspace "$TARGET_ID"
+    fi
+fi

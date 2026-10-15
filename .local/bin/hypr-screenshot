@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+MODE="${1:-area}"
+SAVE_DIR="$HOME/Pictures/Screenshots"
+mkdir -p "$SAVE_DIR"
+TIMESTAMP=$(date +'%Y-%m-%d %H-%M-%S')
+FILENAME="Screenshot From ${TIMESTAMP}.png"
+FILEPATH="${SAVE_DIR}/${FILENAME}"
+
+case "$MODE" in
+    area)
+        # Seleção interativa de área usando slurp
+        GEOM=$(slurp 2>/dev/null)
+        [ -z "$GEOM" ] && exit 0
+        grim -g "$GEOM" "$FILEPATH" || exit 1
+        ;;
+    full)
+        # Captura da tela cheia
+        sleep 0.1
+        grim "$FILEPATH" || exit 1
+        ;;
+    window)
+        # Captura da janela ativa focada
+        GEOM=$(hyprctl activewindow -j 2>/dev/null | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"' 2>/dev/null)
+        if [ -z "$GEOM" ] || [ "$GEOM" = "null,null nullxnull" ]; then
+            grim "$FILEPATH" || exit 1
+        else
+            grim -g "$GEOM" "$FILEPATH" || exit 1
+        fi
+        ;;
+    edit)
+        # Modo com editor interativo Swappy
+        GEOM=$(slurp 2>/dev/null)
+        [ -z "$GEOM" ] && exit 0
+        grim -g "$GEOM" "$FILEPATH" || exit 1
+        wl-copy --type image/png < "$FILEPATH"
+        swappy -f "$FILEPATH" -o "$FILEPATH"
+        exit 0
+        ;;
+    *)
+        GEOM=$(slurp 2>/dev/null)
+        [ -z "$GEOM" ] && exit 0
+        grim -g "$GEOM" "$FILEPATH" || exit 1
+        ;;
+esac
+
+if [ -f "$FILEPATH" ]; then
+    # Copia a imagem capturada para a área de transferência
+    wl-copy --type image/png < "$FILEPATH"
+
+    # Visual notification with image preview
+    notify-send -a "Screenshot" \
+                -i "$FILEPATH" \
+                "Screenshot Salvo" \
+                "Salvo em: ~/Pictures/Screenshots\nCopiado para o clipboard (Cole com Ctrl+V ou Ctrl+Shift+V)"
+fi

@@ -1,0 +1,13 @@
+width=650
+height=420
+location=center
+show=drun
+prompt=Search...
+filter_rate=100
+allow_images=true
+image_size=24
+no_actions=true
+insensitive=true
+hide_scroll=true
+layer=overlay
+key_exit=Escape

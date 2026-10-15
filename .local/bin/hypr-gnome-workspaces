@@ -1,0 +1,136 @@
+#!/usr/bin/env python3
+"""
+hypr-gnome-workspaces: GNOME-style dynamic workspace compaction for Hyprland.
+- Keeps workspaces contiguous (1, 2, 3...) without gaps or stranded empty workspaces.
+- Listens to Hyprland socket2 events (closewindow, movewindow, destroyworkspace).
+- Provides CLI commands for manual compaction and window movement.
+"""
+
+import os
+import sys
+import json
+import time
+import glob
+import socket
+import select
+import subprocess
+
+def get_socket_path():
+    sig = os.environ.get("HYPRLAND_INSTANCE_SIGNATURE", "")
+    base_dir = f"/run/user/{os.getuid()}/hypr"
+    if sig:
+        path = os.path.join(base_dir, sig, ".socket2.sock")
+        if os.path.exists(path):
+            return path
+    candidates = glob.glob(os.path.join(base_dir, "*", ".socket2.sock"))
+    if candidates:
+        return candidates[0]
+    return None
+
+def hypr_dispatch(raw_cmd):
+    try:
+        res = subprocess.run(
+            ["hyprctl", "dispatch", f"hl.dsp.exec_raw('{raw_cmd}')"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=1
+        )
+        if res.returncode != 0:
+            parts = raw_cmd.split(" ", 1)
+            subprocess.run(
+                ["hyprctl", "dispatch", *parts],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=1
+            )
+    except Exception:
+        pass
+
+def compact():
+    try:
+        subprocess.run(
+            ["hyprctl", "repl", "if _G.compact_workspaces then _G.compact_workspaces() end"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=1
+        )
+    except Exception:
+        pass
+
+def move_window_relative(offset):
+    try:
+        active_raw = subprocess.check_output(["hyprctl", "activeworkspace", "-j"], timeout=1)
+        active = json.loads(active_raw)
+        current = active.get("id", 1)
+        target = max(1, current + offset)
+        subprocess.run(
+            ["hyprctl", "dispatch", f"hl.dsp.window.move({{ workspace = {target} }})"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=1
+        )
+        subprocess.run(
+            ["hyprctl", "dispatch", f"hl.dsp.focus({{ workspace = {target} }})"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=1
+        )
+    except Exception:
+        pass
+
+def daemon():
+    sock_path = get_socket_path()
+    if not sock_path:
+        print("Error: Could not locate Hyprland socket2.sock", file=sys.stderr)
+        sys.exit(1)
+
+    while True:
+        try:
+            s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            s.connect(sock_path)
+            s.setblocking(False)
+            buf = ""
+            last_event_time = 0
+            pending_compact = False
+
+            while True:
+                r, _, _ = select.select([s], [], [], 0.1)
+                now = time.time()
+
+                if r:
+                    chunk = s.recv(4096).decode("utf-8", errors="ignore")
+                    if not chunk:
+                        break
+                    buf += chunk
+                    while "\n" in buf:
+                        line, buf = buf.split("\n", 1)
+                        if ">>" in line:
+                            event = line.split(">>", 1)[0]
+                            if event in ("closewindow", "movewindow"):
+                                pending_compact = True
+                                last_event_time = now
+
+                # Debounce: run compact 150ms after the last qualifying event
+                if pending_compact and (now - last_event_time >= 0.15):
+                    compact()
+                    pending_compact = False
+
+        except Exception:
+            time.sleep(1)
+
+def main():
+    cmd = sys.argv[1] if len(sys.argv) > 1 else "compact"
+    if cmd == "--daemon":
+        daemon()
+    elif cmd == "compact":
+        compact()
+    elif cmd == "move-prev" or cmd == "move-left":
+        move_window_relative(-1)
+    elif cmd == "move-next" or cmd == "move-right":
+        move_window_relative(1)
+    else:
+        print(f"Unknown command: {cmd}", file=sys.stderr)
+        print("Usage: hypr-gnome-workspaces [compact | --daemon | move-left | move-right]")
+
+if __name__ == "__main__":
+    main()

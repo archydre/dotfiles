@@ -1,0 +1,23 @@
+[window]
+decorations = "None"
+opacity = 0.88
+blur = true
+
+[window.padding]
+x = 14
+y = 14
+
+[font]
+normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
+size = 12.5
+
+[colors.primary]
+background = "#1e1e2e"
+foreground = "#cdd6f4"
+
+[keyboard]
+bindings = [
+  { key = "V", mods = "Control", action = "Paste" },
+  { key = "V", mods = "Control|Shift", action = "Paste" },
+  { key = "C", mods = "Control|Shift", action = "Copy" }
+]

@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+# hypr-volume: Control WirePlumber volume snapped strictly to multiples of 5%
+# Usage: hypr-volume raise | lower | mute
+
+ACTION="${1:-raise}"
+STEP=5
+MAX_VOL=150
+
+# Get current volume as integer percentage (e.g. 29)
+RAW=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null)
+VOL_FLOAT=$(echo "$RAW" | awk '{print $2}')
+MUTED=$(echo "$RAW" | grep -q "MUTED" && echo "yes" || echo "no")
+VOL_INT=$(awk -v v="$VOL_FLOAT" 'BEGIN { printf "%.0f", v * 100 }')
+
+case "$ACTION" in
+    raise)
+        NEW_VOL=$(( (VOL_INT / STEP) * STEP + STEP ))
+        if [ "$NEW_VOL" -gt "$MAX_VOL" ]; then
+            NEW_VOL=$MAX_VOL
+        fi
+        wpctl set-mute @DEFAULT_AUDIO_SINK@ 0
+        wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ "$(awk -v v="$NEW_VOL" 'BEGIN { printf "%.2f", v / 100 }')"
+        ;;
+    lower)
+        if [ $((VOL_INT % STEP)) -eq 0 ]; then
+            NEW_VOL=$(( VOL_INT - STEP ))
+        else
+            NEW_VOL=$(( (VOL_INT / STEP) * STEP ))
+        fi
+        if [ "$NEW_VOL" -lt 0 ]; then
+            NEW_VOL=0
+        fi
+        wpctl set-volume @DEFAULT_AUDIO_SINK@ "$(awk -v v="$NEW_VOL" 'BEGIN { printf "%.2f", v / 100 }')"
+        ;;
+    mute)
+        wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+        ;;
+esac
+
+# Read updated volume
+RAW=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null)
+VOL_FLOAT=$(echo "$RAW" | awk '{print $2}')
+IS_MUTED=$(echo "$RAW" | grep -q "MUTED" && echo "yes" || echo "no")
+CURR_VOL=$(awk -v v="$VOL_FLOAT" 'BEGIN { printf "%.0f", v * 100 }')
+
+if [ "$IS_MUTED" = "yes" ]; then
+    notify-send -a "Volume" \
+                -h string:x-canonical-private-synchronous:volume_notif \
+                -h int:value:0 \
+                -t 1500 \
+                "Volume: Muted" "󰝟 Audio Muted"
+else
+    # Choose icon based on level
+    if [ "$CURR_VOL" -ge 60 ]; then
+        ICON="󰕾"
+    elif [ "$CURR_VOL" -ge 20 ]; then
+        ICON="󰖀"
+    else
+        ICON="󰕿"
+    fi
+
+    # Progress bar displayed via Dunst
+    notify-send -a "Volume" \
+                -h string:x-canonical-private-synchronous:volume_notif \
+                -h int:value:"$CURR_VOL" \
+                -t 1500 \
+                "${ICON} Volume: ${CURR_VOL}%"
+fi

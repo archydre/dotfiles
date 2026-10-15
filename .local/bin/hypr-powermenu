@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# Power menu for Hyprland using Wofi
+entries="🔒 Lock Screen\n💤 Suspend\n🚪 Log Out\n🔄 Restart\n⏻ Shut Down"
+
+selected=$(echo -e "$entries" | wofi --dmenu --prompt "Power Menu" --width 300 --height 270 --location center --hide-scroll)
+
+case "$selected" in
+    *"Lock Screen"*)
+        hyprlock
+        ;;
+    *"Suspend"*)
+        systemctl suspend
+        ;;
+    *"Log Out"*)
+        hyprctl dispatch "hl.dsp.exit()" >/dev/null 2>&1 || hyprctl dispatch "hl.dsp.exec_raw('exit')" >/dev/null 2>&1 || hyprctl dispatch exit
+        ;;
+    *"Restart"*)
+        systemctl reboot
+        ;;
+    *"Shut Down"*)
+        systemctl poweroff
+        ;;
+esac

@@ -1,0 +1,7 @@
+[Default]
+save_dir=__HOME__/Pictures/Screenshots
+save_filename_format=Screenshot From %Y-%m-%d %H-%M-%S.png
+auto_save=true
+early_exit=false
+fill_shape=false
+paint_mode=brush
