@@ -7,10 +7,10 @@ selected=$(echo -e "$entries" | wofi --dmenu --prompt "Power Menu" --width 300 -
 
 case "$selected" in
     *"Lock Screen"*)
-        hyprlock
+        hyprlock --immediate-render
         ;;
     *"Suspend"*)
-        systemctl suspend
+        hypr-suspend
         ;;
     *"Log Out"*)
         hyprctl dispatch "hl.dsp.exit()" >/dev/null 2>&1 || hyprctl dispatch "hl.dsp.exec_raw('exit')" >/dev/null 2>&1 || hyprctl dispatch exit

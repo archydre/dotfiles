@@ -132,6 +132,7 @@ dotfiles/
 │       ├── hypr-move-window-menu
 │       ├── hypr-powermenu
 │       ├── hypr-screenshot
+│       ├── hypr-suspend
 │       ├── hypr-volume
 │       ├── hypr-wallpaper-picker
 │       └── hypr-workspace-scroll

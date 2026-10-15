@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# hypr-suspend: Suspensão suave com tela de bloqueio do Hyprland
+# ==============================================================================
+
+set -euo pipefail
+
+# 1. Inicia hyprlock com renderização imediata se ainda não estiver em execução
+if ! pgrep -x hyprlock > /dev/null; then
+    hyprlock --immediate-render &
+fi
+
+# 2. Aguarda a renderização do frame na GPU para uma transição suave
+sleep 0.7
+
+# 3. Suspende o sistema via systemd
+systemctl suspend
+
+# 4. Ao acordar da suspensão, garante que os displays estejam ativos e visíveis
+hyprctl dispatch dpms on >/dev/null 2>&1 || true
