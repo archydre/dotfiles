@@ -14,8 +14,6 @@ window#waybar {
 /* Estilo comum para as cápsulas / ilhas flutuantes com efeito Glassmorphism */
 #custom-arch,
 #workspaces,
-#custom-wallpaper,
-#custom-cliphist,
 #mpris,
 #window,
 #cpu,
@@ -43,8 +41,6 @@ window#waybar.empty #window {
 
 /* Efeito hover suave nos módulos */
 #custom-arch:hover,
-#custom-wallpaper:hover,
-#custom-cliphist:hover,
 #custom-power:hover,
 #wireplumber:hover,
 #clock:hover {
@@ -58,19 +54,6 @@ window#waybar.empty #window {
     font-size: 16px;
     padding: 3px 10px;
     margin-left: 4px;
-}
-
-/* Seletor de wallpaper & clipboard */
-#custom-wallpaper {
-    color: #f5c2e7;
-    font-size: 14px;
-    padding: 3px 10px;
-}
-
-#custom-cliphist {
-    color: #b4befe;
-    font-size: 14px;
-    padding: 3px 10px;
 }
 
 /* Cápsula de Workspaces */

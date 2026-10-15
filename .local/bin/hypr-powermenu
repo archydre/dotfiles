@@ -2,24 +2,21 @@
 export PATH="$HOME/.local/bin:$PATH"
 
 # Power menu for Hyprland using Wofi
-entries="🔒 Lock Screen\n💤 Suspend\n🚪 Log Out\n🔄 Restart\n⏻ Shut Down"
+entries="💤 Suspender\n🚪 Encerrar Sessão\n🔄 Reiniciar\n⏻ Desligar"
 
-selected=$(echo -e "$entries" | wofi --dmenu --prompt "Power Menu" --width 300 --height 270 --location center --hide-scroll)
+selected=$(echo -e "$entries" | wofi --dmenu --prompt "Power Menu" --width 280 --height 220 --location center --hide-scroll)
 
 case "$selected" in
-    *"Lock Screen"*)
-        hyprlock --immediate-render
-        ;;
-    *"Suspend"*)
+    *"Suspender"*|*"Suspend"*)
         "$HOME/.local/bin/hypr-suspend"
         ;;
-    *"Log Out"*)
+    *"Encerrar Sessão"*|*"Log Out"*|*"Sair"*)
         hyprctl dispatch "hl.dsp.exit()" >/dev/null 2>&1 || hyprctl dispatch "hl.dsp.exec_raw('exit')" >/dev/null 2>&1 || hyprctl dispatch exit
         ;;
-    *"Restart"*)
+    *"Reiniciar"*|*"Restart"*)
         systemctl reboot
         ;;
-    *"Shut Down"*)
+    *"Desligar"*|*"Shut Down"*)
         systemctl poweroff
         ;;
 esac

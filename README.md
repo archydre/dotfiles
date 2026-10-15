@@ -45,8 +45,8 @@ chmod +x install.sh
 | **Lançador de Apps** | `wofi` | Menu centralizado com cantos arredondados, backdrop blur e campo de busca rápida. |
 | **Terminal** | `alacritty` | Configuração com paleta Catppuccin Mocha e fonte JetBrains Mono Nerd Font. |
 | **Notificações** | `dunst` | Notificações minimalistas com suporte a ações, ícones e cores temáticas. |
-| **Tela de Bloqueio** | `hyprlock` | Lockscreen elegante com relógio central tipográfico, data e blur do wallpaper atual. |
-| **Gerenciador de Wallpaper** | `hyprpaper` | Suporte multimonitor automático com seletor interativo em Wofi (`Super + Shift + W`). |
+| **Tela de Bloqueio & Suspensão** | `hyprlock` | Lockscreen elegante com relógio central tipográfico, data, status de suspensão e blur. |
+| **Gerenciador de Wallpaper** | `hyprpaper` | Suporte multimonitor automático com carregamento suave de papéis de parede. |
 | **Clipboard** | `cliphist` + `wl-clipboard` | Histórico completo de texto e imagens acessível via `Super + V`. |
 | **Captura de Tela** | `grim` + `slurp` + `swappy` + `loupe` | Captura de região, tela inteira ou janela com atalho para edição instantânea. |
 | **Áudio e Mídia** | `wireplumber` + `playerctl` + `pavucontrol` | Controle de volume nativo com feedback via notificação e atalhos de mídia. |
@@ -66,9 +66,8 @@ A tecla **`Super`** (`Mod4` / tecla Windows) é o modificador principal:
 | `Super + E` | Gerenciador de Arquivos (`nautilus`) |
 | `Super + B` | Navegador Web Padrão |
 | `Super + V` | Histórico da Área de Transferência (`cliphist`) |
-| `Super + L` | Bloquear tela (`hyprlock`) |
+| `Super + L` | Suspender e bloquear sessão (`hypr-suspend`) |
 | `Super + Shift + Q` | Menu de Energia / Desligamento (`hypr-powermenu`) |
-| `Super + Shift + W` | Seletor Gráfico de Wallpapers (`hypr-wallpaper-picker`) |
 | `Super + Shift + M` | Encerrar sessão do Hyprland |
 
 ### 🪟 Gerenciamento de Janelas
@@ -134,7 +133,6 @@ dotfiles/
 │       ├── hypr-screenshot
 │       ├── hypr-suspend
 │       ├── hypr-volume
-│       ├── hypr-wallpaper-picker
 │       └── hypr-workspace-scroll
 ├── wallpapers/              # Coleção curada de wallpapers de alta definição
 ├── install.sh               # Script de instalação e configuração automatizada

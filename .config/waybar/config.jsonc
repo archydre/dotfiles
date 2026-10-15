@@ -8,9 +8,7 @@
     "spacing": 6,
     "modules-left": [
         "custom/arch",
-        "hyprland/workspaces",
-        "custom/wallpaper",
-        "custom/cliphist"
+        "hyprland/workspaces"
     ],
     "modules-center": [
         "mpris",
@@ -29,18 +27,6 @@
         "format": "󰣇",
         "tooltip": "Application Menu",
         "on-click": "wofi --show drun"
-    },
-
-    "custom/wallpaper": {
-        "format": "󰸉",
-        "tooltip": "Change Wallpaper (Super+Shift+W)",
-        "on-click": "~/.local/bin/hypr-wallpaper-picker"
-    },
-
-    "custom/cliphist": {
-        "format": "󱉥",
-        "tooltip": "Clipboard History (Super+V)",
-        "on-click": "cliphist list | wofi --dmenu --prompt 'Clipboard History' | cliphist decode | wl-copy"
     },
 
     "hyprland/workspaces": {
