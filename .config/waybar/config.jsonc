@@ -34,7 +34,7 @@
     "custom/wallpaper": {
         "format": "󰸉",
         "tooltip": "Change Wallpaper (Super+Shift+W)",
-        "on-click": "hypr-wallpaper-picker"
+        "on-click": "~/.local/bin/hypr-wallpaper-picker"
     },
 
     "custom/cliphist": {
@@ -47,8 +47,8 @@
         "disable-scroll": false,
         "all-outputs": true,
         "format": "{name}",
-        "on-scroll-up": "hypr-workspace-scroll prev",
-        "on-scroll-down": "hypr-workspace-scroll next"
+        "on-scroll-up": "~/.local/bin/hypr-workspace-scroll prev",
+        "on-scroll-down": "~/.local/bin/hypr-workspace-scroll next"
     },
 
     "mpris": {
@@ -88,9 +88,9 @@
         "format-muted": "󰝟  Muted",
         "format-icons": ["󰕿", "󰖀", "󰕾"],
         "on-click": "pavucontrol",
-        "on-click-right": "hypr-volume mute",
-        "on-scroll-up": "hypr-volume raise",
-        "on-scroll-down": "hypr-volume lower",
+        "on-click-right": "~/.local/bin/hypr-volume mute",
+        "on-scroll-up": "~/.local/bin/hypr-volume raise",
+        "on-scroll-down": "~/.local/bin/hypr-volume lower",
         "scroll-step": 5,
         "tooltip": true,
         "tooltip-format": "Volume: {volume}%"
@@ -110,6 +110,6 @@
     "custom/power": {
         "format": "󰐥",
         "tooltip": "Power Options",
-        "on-click": "hypr-powermenu"
+        "on-click": "~/.local/bin/hypr-powermenu"
     }
 }

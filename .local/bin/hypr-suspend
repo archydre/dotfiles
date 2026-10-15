@@ -3,15 +3,15 @@
 # hypr-suspend: Suspensão suave com tela de bloqueio do Hyprland
 # ==============================================================================
 
-set -euo pipefail
+export PATH="$HOME/.local/bin:$PATH"
 
-# 1. Inicia hyprlock com renderização imediata se ainda não estiver em execução
+# 1. Inicia hyprlock se ainda não estiver em execução
 if ! pgrep -x hyprlock > /dev/null; then
     hyprlock --immediate-render &
 fi
 
 # 2. Aguarda a renderização do frame na GPU para uma transição suave
-sleep 0.7
+sleep 0.8
 
 # 3. Suspende o sistema via systemd
 systemctl suspend

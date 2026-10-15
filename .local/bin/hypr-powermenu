@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+export PATH="$HOME/.local/bin:$PATH"
 
 # Power menu for Hyprland using Wofi
 entries="🔒 Lock Screen\n💤 Suspend\n🚪 Log Out\n🔄 Restart\n⏻ Shut Down"
@@ -10,7 +11,7 @@ case "$selected" in
         hyprlock --immediate-render
         ;;
     *"Suspend"*)
-        hypr-suspend
+        "$HOME/.local/bin/hypr-suspend"
         ;;
     *"Log Out"*)
         hyprctl dispatch "hl.dsp.exit()" >/dev/null 2>&1 || hyprctl dispatch "hl.dsp.exec_raw('exit')" >/dev/null 2>&1 || hyprctl dispatch exit
