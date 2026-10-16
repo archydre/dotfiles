@@ -1,4 +1,16 @@
 #!/usr/bin/env bash
+export PATH="$HOME/.local/bin:$PATH"
+
+# Evita empilhar seleções de tela: se o slurp já estiver rodando, cancela e sai
+if pgrep -x slurp > /dev/null; then
+    pkill -x slurp
+    exit 0
+fi
+
+# Se o swappy já estiver aberto, fecha instância anterior
+if pgrep -x swappy > /dev/null; then
+    pkill -x swappy
+fi
 
 MODE="${1:-area}"
 SAVE_DIR="$HOME/Pictures/Screenshots"
@@ -45,12 +57,12 @@ case "$MODE" in
 esac
 
 if [ -f "$FILEPATH" ]; then
-    # Copia a imagem capturada para a área de transferência
+    # Copia a imagem capturada para a área de transferência do Wayland
     wl-copy --type image/png < "$FILEPATH"
 
-    # Visual notification with image preview
+    # Notificação com preview da imagem
     notify-send -a "Screenshot" \
                 -i "$FILEPATH" \
                 "Screenshot Salvo" \
-                "Salvo em: ~/Pictures/Screenshots\nCopiado para o clipboard (Cole com Ctrl+V ou Ctrl+Shift+V)"
+                "Salvo em: ~/Pictures/Screenshots\nCopiado para o clipboard (Cole com Ctrl+V)"
 fi
